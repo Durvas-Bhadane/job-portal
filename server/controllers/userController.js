@@ -103,12 +103,13 @@ export const updateUserResume = async (req, res) => {
                     resource_type: "raw",
                     type: "upload",
                     public_id: `resumes/${userId}`,
+                    format: "pdf",        // ⭐⭐ MOST IMPORTANT
                     overwrite: true,
                     invalidate: true
                 }
             )
 
-            const resumeUrl = cloudinary.url(resumeUpload.public_id, {
+            const resumeUrl = cloudinary.url(resumeUpload.public_id + ".pdf", {
                 resource_type: "raw",
                 type: "upload",
                 secure: true

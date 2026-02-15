@@ -96,12 +96,27 @@ export const updateUserResume = async (req, res) => {
         const userData = await User.findById(userId)
 
         if (resumeFile) {
-            const resumeUpload = await cloudinary.uploader.upload(resumeFile.path, {
-                type: "upload",        
-                access_mode: "public",
+
+            const resumeUpload = await cloudinary.uploader.upload(
+                resumeFile.path,
+                {
+                    resource_type: "raw",
+                    type: "upload",
+                    public_id: `resumes/${userId}`,
+                    overwrite: true,
+                    invalidate: true
+                }
+            )
+
+            const resumeUrl = cloudinary.url(resumeUpload.public_id, {
+                resource_type: "raw",
+                type: "upload",
+                secure: true
             })
-            userData.resume = resumeUpload.secure_url
+
+            userData.resume = resumeUrl
         }
+
 
         await userData.save()
 

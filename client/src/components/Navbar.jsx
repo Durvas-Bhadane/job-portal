@@ -23,7 +23,7 @@ const Navbar = () => {
                 <div className='flex items-center gap-8'>
                     <img
                         onClick={() => navigate('/')}
-                        className='cursor-pointer h-8'
+                        className='cursor-pointer h-12'
                         src={assets.logo}
                         alt="Job Portal"
                     />

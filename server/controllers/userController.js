@@ -98,8 +98,9 @@ export const updateUserResume = async (req, res) => {
         if (resumeFile) {
             const resumeUpload = await cloudinary.uploader.upload(resumeFile.path, {
                 resource_type: "raw",
-                type: "upload",
-                access_mode: "public"
+                type: "upload",        
+                access_mode: "public",
+                format: "pdf"
             })
             userData.resume = resumeUpload.secure_url
         }

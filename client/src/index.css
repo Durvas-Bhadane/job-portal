@@ -1,43 +1,90 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-*{
-  font-family: Outfit;
+* {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
 }
 
 @layer base {
   html {
     scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    background-color: #F8FAFC;
+    color: #243B53;
   }
 }
 
-::-webkit-scrollbar{
-  display: none;
+::-webkit-scrollbar {
+  width: 6px;
 }
 
-.rich-text { font-size: 15px; color: #7A7B7D; }
+::-webkit-scrollbar-track {
+  background: #F0F4F8;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #BCCCDC;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #829AB1;
+}
+
+/* Rich text styles */
+.rich-text { font-size: 15px; color: #627D98; line-height: 1.7; }
 
 .rich-text p { margin-bottom: 16px; }
 
-.rich-text h1 { font-size: 36px; font-weight: 800; color: #252525; margin: 32px 0; }
+.rich-text h1 { font-size: 32px; font-weight: 800; color: #102A43; margin: 28px 0 16px; }
 
-.rich-text h2 { font-size: 22px; font-weight: 700; color: #252525; margin: 24px 0; }
+.rich-text h2 { font-size: 22px; font-weight: 700; color: #243B53; margin: 24px 0 12px; }
 
-.rich-text h3 { font-size: 18px; font-weight: 600; color: #333333; margin: 20px 0; }
+.rich-text h3 { font-size: 18px; font-weight: 600; color: #334E68; margin: 20px 0 10px; }
 
-.rich-text h4 { font-size: 16px; font-weight: 500; color: #444444; margin: 16px 0; }
+.rich-text h4 { font-size: 16px; font-weight: 600; color: #486581; margin: 16px 0 8px; }
 
-.rich-text h5 { font-size: 14px; font-weight: 400; color: #555555; margin: 12px 0; }
+.rich-text h5 { font-size: 14px; font-weight: 500; color: #627D98; margin: 12px 0 6px; }
 
-.rich-text h6 { font-size: 12px; font-weight: 400; color: #666666; margin: 8px 0; }
+.rich-text h6 { font-size: 13px; font-weight: 500; color: #829AB1; margin: 8px 0 4px; }
 
-.rich-text strong { font-weight: 700; }
+.rich-text strong { font-weight: 700; color: #243B53; }
 
-.rich-text ol { margin-left: 30px; list-style-type: decimal; }
+.rich-text ol { margin-left: 24px; list-style-type: decimal; }
 
-.rich-text ul { margin-left: 30px; list-style-type: disc; }
+.rich-text ul { margin-left: 24px; list-style-type: disc; }
 
-.rich-text li { margin-bottom: 8px; }
+.rich-text li { margin-bottom: 8px; padding-left: 4px; }
+
+/* Quill editor overrides */
+.ql-toolbar.ql-snow {
+  border-color: #D9E2EC !important;
+  border-radius: 8px 8px 0 0;
+  background: #F8FAFC;
+}
+
+.ql-container.ql-snow {
+  border-color: #D9E2EC !important;
+  border-radius: 0 0 8px 8px;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-size: 15px;
+  min-height: 200px;
+}
+
+/* Transition utilities */
+.transition-all-200 {
+  transition: all 0.2s ease;
+}
+
+/* Focus ring utility */
+.focus-ring {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.3);
+}

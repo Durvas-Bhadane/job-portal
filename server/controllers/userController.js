@@ -2,6 +2,8 @@ import Job from "../models/Job.js"
 import JobApplication from "../models/JobApplication.js"
 import User from "../models/User.js"
 import { v2 as cloudinary } from "cloudinary"
+import s3 from "../config/aws.js"
+import fs from "fs"
 
 // Get User Data
 export const getUserData = async (req, res) => {
@@ -96,8 +98,23 @@ export const updateUserResume = async (req, res) => {
         const userData = await User.findById(userId)
 
         if (resumeFile) {
-            const resumeUpload = await cloudinary.uploader.upload(resumeFile.path)
-            userData.resume = resumeUpload.secure_url
+            // === CLOUDINARY UPLOAD (Commented out for reversibility) ===
+            // const resumeUpload = await cloudinary.uploader.upload(resumeFile.path)
+            // userData.resume = resumeUpload.secure_url
+
+            // === AWS S3 UPLOAD ===
+            const fileStream = fs.createReadStream(resumeFile.path)
+
+            const uploadParams = {
+                Bucket: process.env.AWS_S3_BUCKET_NAME || 'my-bucket-job-portal',
+                Key: `resumes/${Date.now()}_${resumeFile.originalname}`,
+                Body: fileStream,
+                ContentType: resumeFile.mimetype,
+            }
+
+            const s3Upload = await s3.upload(uploadParams).promise()
+            userData.resume = s3Upload.Location
+            // =====================
         }
 
         await userData.save()

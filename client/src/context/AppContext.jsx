@@ -55,14 +55,7 @@ export const AppContextProvider = (props) => {
             if (data.success) {
                 setCompanyData(data.company)
             } else {
-                if (data.message === 'jwt expired' || data.message === 'jwt malformed' || data.message === 'Not authorized, Login Again') {
-                    setCompanyData(null)
-                    setCompanyToken(null)
-                    localStorage.removeItem('companyToken')
-                    toast.error('Session expired. Please log in again.')
-                } else {
-                    toast.error(data.message)
-                }
+                toast.error(data.message)
             }
 
         } catch (error) {

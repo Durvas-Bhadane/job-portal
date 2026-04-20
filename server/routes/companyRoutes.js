@@ -1,32 +1,41 @@
-import express from 'express'
-import { ChangeJobApplicationsStatus, changeVisiblity, getCompanyData, getCompanyJobApplicants, getCompanyPostedJobs, loginCompany, postJob, registerCompany } from '../controllers/companyController.js'
-import upload from '../config/multer.js'
-import { protectCompany } from '../middleware/authMiddleware.js'
+const express = require('express');
+const {
+  registerCompany,
+  loginCompany,
+  getCompanyData,
+  postJob,
+  getCompanyJobApplicants,
+  getCompanyPostedJobs,
+  ChangeJobApplicationsStatus,
+  changeVisiblity
+} = require('../controllers/companyController');
+const { uploadCompanyLogo } = require('../config/s3');
+const { protectCompany } = require('../middleware/authMiddleware');
 
-const router = express.Router()
+const router = express.Router();
 
 // Register a company
-router.post('/register', upload.single('image'), registerCompany)
+router.post('/register', uploadCompanyLogo.single('image'), registerCompany);
 
 // Company login
-router.post('/login', loginCompany)
+router.post('/login', loginCompany);
 
 // Get company data
-router.get('/company', protectCompany, getCompanyData)
+router.get('/company', protectCompany, getCompanyData);
 
 // Post a job
-router.post('/post-job', protectCompany, postJob)
+router.post('/post-job', protectCompany, postJob);
 
 // Get Applicants Data of Company
-router.get('/applicants', protectCompany, getCompanyJobApplicants)
+router.get('/applicants', protectCompany, getCompanyJobApplicants);
 
-// Get  Company Job List
-router.get('/list-jobs', protectCompany, getCompanyPostedJobs)
+// Get Company Job List
+router.get('/list-jobs', protectCompany, getCompanyPostedJobs);
 
-// Change Applcations Status 
-router.post('/change-status', protectCompany, ChangeJobApplicationsStatus)
+// Change Applications Status 
+router.post('/change-status', protectCompany, ChangeJobApplicationsStatus);
 
-// Change Applcations Visiblity 
-router.post('/change-visiblity', protectCompany, changeVisiblity)
+// Change Applications Visibility 
+router.post('/change-visiblity', protectCompany, changeVisiblity);
 
-export default router
+module.exports = router;

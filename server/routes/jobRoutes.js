@@ -1,13 +1,17 @@
-import express from 'express'
-import { getJobById, getJobs } from '../controllers/jobController.js';
+const express = require('express');
+const { getJobs, getJob, createJob, updateJob, deleteJob, getMyJobs } = require('../controllers/job');
+const { protectCompany } = require('../middleware/authMiddleware');
 
-const router = express.Router()
+const router = express.Router();
 
-// Route to get all jobs data
-router.get('/', getJobs)
+// Public routes
+router.get('/', getJobs);
+router.get('/:id', getJob);
 
-// Route to get a single job by ID
-router.get('/:id', getJobById)
+// Employer / Company protected routes
+router.post('/', protectCompany, createJob);
+router.get('/my-jobs', protectCompany, getMyJobs);
+router.put('/:id', protectCompany, updateJob);
+router.delete('/:id', protectCompany, deleteJob);
 
-
-export default router;
+module.exports = router;

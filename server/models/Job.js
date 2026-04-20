@@ -24,14 +24,18 @@ const Job = sequelize.define(
     responsibilities: {
       type: DataTypes.TEXT,
     },
-    // Employer FK — set in associations (models/index.js)
+    // Employer (User) FK — set via associations in models/index.js
     employerId: {
-      type: DataTypes.UUID,
-      allowNull: false,
+      type: DataTypes.STRING,
+      allowNull: true,
     },
-    company: {
+    // Company FK — set via associations in models/index.js
+    companyId: {
+      type: DataTypes.UUID,
+      allowNull: true,
+    },
+    companyName: {
       type: DataTypes.STRING(200),
-      allowNull: false,
     },
     companyLogo: {
       type: DataTypes.STRING(500),
@@ -47,9 +51,16 @@ const Job = sequelize.define(
     category: {
       type: DataTypes.STRING(100),
     },
+    level: {
+      // experience level alias used by company controller (entry/mid/senior etc.)
+      type: DataTypes.STRING(50),
+    },
     skills: {
       type: DataTypes.ARRAY(DataTypes.STRING),
       defaultValue: [],
+    },
+    salary: {
+      type: DataTypes.INTEGER,
     },
     salaryMin: {
       type: DataTypes.INTEGER,
@@ -69,12 +80,21 @@ const Job = sequelize.define(
       type: DataTypes.BOOLEAN,
       defaultValue: true,
     },
+    // Visibility toggle used by company dashboard
+    visible: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: true,
+    },
     deadline: {
       type: DataTypes.DATE,
     },
     views: {
       type: DataTypes.INTEGER,
       defaultValue: 0,
+    },
+    // Unix timestamp for legacy compatibility
+    date: {
+      type: DataTypes.BIGINT,
     },
   },
   {

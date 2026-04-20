@@ -15,8 +15,13 @@ const Application = sequelize.define(
       allowNull: false,
     },
     applicantId: {
-      type: DataTypes.UUID,
+      type: DataTypes.STRING,
       allowNull: false,
+    },
+    // Company that owns this job (denormalized for quick company-level queries)
+    companyId: {
+      type: DataTypes.UUID,
+      allowNull: true,
     },
     // Application content
     coverLetter: {
@@ -33,7 +38,11 @@ const Application = sequelize.define(
         'interviewed',
         'offered',
         'rejected',
-        'withdrawn'
+        'withdrawn',
+        // legacy statuses used by old company controller
+        'Pending',
+        'Accepted',
+        'Rejected'
       ),
       defaultValue: 'pending',
     },
@@ -43,6 +52,10 @@ const Application = sequelize.define(
     appliedAt: {
       type: DataTypes.DATE,
       defaultValue: DataTypes.NOW,
+    },
+    // Unix timestamp for legacy compatibility
+    date: {
+      type: DataTypes.BIGINT,
     },
   },
   {

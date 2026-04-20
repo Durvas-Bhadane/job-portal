@@ -6,9 +6,11 @@ const User = sequelize.define(
   'User',
   {
     id: {
-      type: DataTypes.UUID,
-      defaultValue: DataTypes.UUIDV4,
+      type: DataTypes.STRING,
       primaryKey: true,
+      // For local employer accounts, we can manually generate a UUID string
+      // or let Sequelize do it if we keep defaultValue.
+      defaultValue: DataTypes.UUIDV4,
     },
     name: {
       type: DataTypes.STRING(100),

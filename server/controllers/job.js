@@ -38,9 +38,9 @@ exports.getJobs = async (req, res) => {
       where,
       include: [
         {
-          model: User,
-          as: 'employer',
-          attributes: ['id', 'name', 'email', 'companyName', 'companyLogo'],
+          model: Company,
+          as: 'company',
+          attributes: ['id', 'name', 'email', 'image'],
         },
       ],
       order: [['createdAt', 'DESC']],
@@ -53,7 +53,7 @@ exports.getJobs = async (req, res) => {
       count,
       totalPages: Math.ceil(count / limit),
       currentPage: Number(page),
-      data: jobs,
+      jobs, // frontend expects data.jobs
     });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
@@ -65,10 +65,9 @@ exports.getJobs = async (req, res) => {
 // ─────────────────────────────────────────────────────────────
 exports.getJob = async (req, res) => {
   try {
-    // Mongoose: Job.findById(id).populate(...)
     const job = await Job.findByPk(req.params.id, {
       include: [
-        { model: User, as: 'employer', attributes: ['id', 'name', 'companyName', 'companyLogo', 'location'] },
+        { model: Company, as: 'company', attributes: ['id', 'name', 'email', 'image'] },
       ],
     });
 
@@ -77,7 +76,7 @@ exports.getJob = async (req, res) => {
     // Increment view count
     await job.increment('views');
 
-    res.status(200).json({ success: true, data: job });
+    res.status(200).json({ success: true, job }); // frontend might expect data.job
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
   }

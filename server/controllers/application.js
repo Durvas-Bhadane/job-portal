@@ -17,7 +17,7 @@ exports.applyForJob = async (req, res) => {
 
     // Prevent duplicate application (unique index on jobId + applicantId)
     const existing = await Application.findOne({
-      where: { jobId, applicantId: req.user.id },
+      where: { jobId, applicantId: req.auth.userId },
     });
     if (existing) {
       return res.status(400).json({ success: false, message: 'You have already applied for this job.' });
@@ -28,7 +28,7 @@ exports.applyForJob = async (req, res) => {
 
     const application = await Application.create({
       jobId,
-      applicantId: req.user.id,
+      applicantId: req.auth.userId,
       coverLetter: req.body.coverLetter,
       resumeUrl,
     });
@@ -74,7 +74,7 @@ exports.getJobApplications = async (req, res) => {
 exports.getMyApplications = async (req, res) => {
   try {
     const applications = await Application.findAll({
-      where: { applicantId: req.user.id },
+      where: { applicantId: req.auth.userId },
       include: [
         {
           model: Job,
@@ -124,7 +124,7 @@ exports.withdrawApplication = async (req, res) => {
   try {
     const application = await Application.findByPk(req.params.id);
     if (!application) return res.status(404).json({ success: false, message: 'Application not found.' });
-    if (application.applicantId !== req.user.id) {
+    if (application.applicantId !== req.auth.userId) {
       return res.status(403).json({ success: false, message: 'Not authorized.' });
     }
 

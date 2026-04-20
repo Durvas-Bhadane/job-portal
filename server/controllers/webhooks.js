@@ -1,40 +1,42 @@
-import { Webhook } from "svix";
-import User from "../models/User.js";
+const { Webhook } = require("svix");
+const { User } = require("../models/index");
 
 // API Controller Function to Manage Clerk User with database
-export const clerkWebhooks = async (req, res) => {
+const clerkWebhooks = async (req, res) => {
     try {
-
         // Create a Svix instance with clerk webhook secret.
-        const whook = new Webhook(process.env.CLERK_WEBHOOK_SECRET)
+        const whook = new Webhook(process.env.CLERK_WEBHOOK_SECRET);
 
-        // Verifying Headers
-        await whook.verify(JSON.stringify(req.body), {
+        // We receive a raw Buffer from express.raw()
+        const payloadString = req.body.toString();
+
+        // Verifying Headers using the raw string
+        await whook.verify(payloadString, {
             "svix-id": req.headers["svix-id"],
             "svix-timestamp": req.headers["svix-timestamp"],
             "svix-signature": req.headers["svix-signature"]
-        })
+        });
 
-        // Getting Data from request body
-        const { data, type } = req.body
+        // Parse JSON after verification
+        const { data, type } = JSON.parse(payloadString);
 
-        // Switch Cases for differernt Events
+        // Switch Cases for different Events
         switch (type) {
             case 'user.created': {
-
                 const userData = {
-                    _id: data.id,
+                    id: data.id, // using Clerk's string ID
                     email: data.email_addresses[0].email_address,
                     name: data.first_name + " " + data.last_name,
-                    image: data.image_url,
-                    resume: ''
-                }
-                const user = await User.create(userData)
+                    profileImage: data.image_url,
+                    role: 'jobseeker' // Default role
+                };
+                
+                // Mongoose used User.create. Sequelize also uses User.create
+                const user = await User.create(userData);
                 res.json({
-                    success: "true",
+                    success: true,
                     user: user
-                })
-                console.error(user)
+                });
                 break;
             }
 
@@ -42,28 +44,37 @@ export const clerkWebhooks = async (req, res) => {
                 const userData = {
                     email: data.email_addresses[0].email_address,
                     name: data.first_name + " " + data.last_name,
-                    image: data.image_url,
-                }
-                const user = await User.findByIdAndUpdate(data.id, userData)
+                    profileImage: data.image_url,
+                };
+                
+                // Sequelize equivalent of findByIdAndUpdate
+                const [updatedRows] = await User.update(userData, {
+                    where: { id: data.id }
+                });
                 res.json({
-                    success: "true",
-                    user: user
-                })
-                console.error(user)
-
+                    success: true,
+                    updated: updatedRows > 0
+                });
                 break;
             }
 
             case 'user.deleted': {
-                await User.findByIdAndDelete(data.id)
-                res.json({})
+                // Sequelize equivalent of findByIdAndDelete
+                await User.destroy({
+                    where: { id: data.id }
+                });
+                res.json({ success: true });
                 break;
             }
             default:
+                res.json({ success: false, message: 'Event type not handled' });
                 break;
         }
 
     } catch (error) {
-        res.json({ success: false, message: error.message })
+        console.error("Webhook Error:", error);
+        res.json({ success: false, message: error.message });
     }
-}
+};
+
+module.exports = { clerkWebhooks };
